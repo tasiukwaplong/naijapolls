@@ -9,7 +9,7 @@ function showSecondMenu(votes, text){
 
   const selectedPosition = getVotingPositions(votes.voters_vote, positionIndx)
   if(selectedPosition === false || typeof allCandidates !== 'object' || allCandidates.length < 1) return MSG.USSD_RESPONSE.CANNOT_PROCESS
-  return `${votes.voting_description} \n Choose preferred candidate for: ${selectedPosition} \n\n ${allCandidates[selectedPosition].join('\n')}`
+  return `CON ${votes.voting_description} \n Choose preferred candidate for: ${selectedPosition} \n\n ${allCandidates[selectedPosition].join('\n')}`
 }
 
 async function showThirdMenu(votes, text){
@@ -64,7 +64,7 @@ const isSecondMenu = (text) => {
   }
   // console.log(cuttedText, cuttedText.length)
   return (
-    (cuttedText.length === 2)
+    (text.length === 1 || cuttedText.length === 2)
   );
 };
 
@@ -80,7 +80,7 @@ const isThirdMenu = (text) => {
   // console.log(cuttedText, cuttedText.length)
 
   return (
-    (cuttedText.length === 3)
+    (text.length === 3 || cuttedText.length === 3)
   );
 };
 
@@ -106,24 +106,26 @@ const menuDisplay = async (text = "", phoneNumber) => {
 
   if (checkString[checkString.length - 1] === "#" || text === "#" || text === "") {
     return `CON ${eligibleVoter.voting_description}${eligbleVotePositions}`;
-  }else if(isSecondMenu(text)){
+  }else if(isSecondMenu(text) && (text.length !== 3)){
     return showSecondMenu(eligibleVoter, text)
   }else if(isThirdMenu(text)){
     return showThirdMenu(eligibleVoter, text)
+  }else{
+    MSG.USSD_RESPONSE.CANNOT_PROCESS
   }
 };
 
 module.exports = {
   async handleUSSD(req, res) {
     // handle all USSD rquests
-    const { sessionId = '', serviceCode='', phoneNumber='+2349020834649', text='*2*10'} = req.body;
+    const { sessionId = '', serviceCode='', phoneNumber='+2349020834649', text='0*9'} = req.body;
     // const {
     //   sessionId = "",
     //   serviceCode = "",
     //   phoneNumber = "+2349031514346",
     //   text = "",
     // } = req.body;
-
+console.log(text);
     let ussdResponse = await menuDisplay(text.trim(), phoneNumber);
 
     res.set("Content-Type: text/plain");
