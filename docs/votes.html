@@ -1,0 +1,118 @@
+  <!DOCTYPE html>
+  <html lang="en">
+
+  <head>
+    <title>NAIJAPOLLS | Votes</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="assets/js/app.js"></script>
+
+    <style>
+      .fixed-top {
+        position: sticky;
+      }
+
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="sign-up.html">Sign up</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="login.html  ">Sign in</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="votes.html">Votes</a>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <header class="container-fluid" style="margin-top:30px">
+    </header>
+    <!-- body after header -->
+    <div class="container-fluid mt-4 p-5 bg-dark">
+      <div class="text-center">
+        <p class="text-light">Every vote casted by an individual is stored in a block. Request for your block ID and use that to authenticate your votes:<br></p>
+        <input type="tel" placeholder="e.g 080xxxxx" minlength="11" maxlength="11"> <button class="btn btn-success btn-sm">Request</button> <br><br>
+        <a href="http://testnet.algoexplorer.io/" target="_blank" class="btn btn-primary text-center btn-lg">VERIFY ON BLOCKCHAIN <i
+            class="fa fa-external-link" aria-hidden="true"></i> </a>
+      </div>
+
+      <div class="row p-5" id="contestants">
+        
+      </div>
+    </div>
+
+    <script>
+      getVotes();
+
+      function silentRefresh(){
+        setTimeout(function() {
+          getVotes();
+        }, 4000);
+      }
+
+    function getVotes(){
+      // console.log('hh');
+      var settings = {
+        "url": "election/result",
+        "method": "GET"
+      };
+      
+      $.ajax(settings).done(function (response) {
+        var htmlContent = ''
+        if(response.errored === false){
+          for (let i = 0; i < response.message.length; i++) {
+            // console.log(response.message[i].name)
+            htmlContent += `<div class=" col-md-4 mt-2 shadow">
+          <div class="card">
+            <div class="card-header text-center">
+              <h3>`+response.message[i].name+`</h3>
+              `+response.message[i].extra+` (`+response.message[i].post+`) - ID: `+response.message[i].id+`
+            </div>
+            <div class="card-body">
+              <ul>
+                <li>Votes: `+response.message[i].votes+`</li>
+                <li>Last vote on: `+response.message[i].updatedAt+`</li>
+              </ul>
+            </div>
+          </div>
+        </div>`
+          }
+          $("#contestants").html(htmlContent);
+          silentRefresh();
+          // console.log(htmlContent);          
+        }
+      });
+    }
+    </script>
+
+  </body>
+
+  </html>

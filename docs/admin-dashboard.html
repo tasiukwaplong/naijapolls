@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Admin Dashboard | NAIJAPOLLS</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+        integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+
+    <!-- Font Awesome JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script> -->
+
+    <script type="text/javascript" src="../assets/js/app.js"></script>
+    <script type="text/javascript">
+        if (getCookie('adminToken').length <= 1) {
+            window.location = 'admin-login.html';
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <!-- datatable -->
+    <link rel="stylesheet" href="https//cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css">
+</head>
+
+<body>
+
+    <div class="wrapper" id="app">
+        <!-- Sidebar Holder -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="display-3 fa fa-user-circle-o"></i></h3>
+                <h3>Admin dashboard</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <!-- <li class="active"> -->
+                <li>
+                    <a href="#verification" @click="selected = 'verification'"> <i class="fa fa-hourglass" aria-hidden="true"></i> Institution verification</a>
+                </li>
+                <li>
+                    <a href="#institutions" @click="selected = 'institutions'"> <i class="fa fa-bank" aria-hidden="true"></i> Manage Institutions</a>
+                </li>
+                <li>
+                    <a href="#institutions" @click="selected = 'accounts'"> <i class="fa fa-hourglass" aria-hidden="true"></i> Manage voting</a>
+                </li>
+                <li>
+                    <a href="#withdrawal" @click="selected = 'withdrawal'"><i class="fa fa-chart-bar" aria-hidden="true"></i> Stats</a>
+                </li>
+                <li>
+                    <a href="#" @click="logout()"> <i class="fa fa-power-off"></i> Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content Holder -->
+        <div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="navbar-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.html">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" @click="logout()">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <section v-show="selected === 'verification'" id="verification">
+                <h2>Institution verification</h2>
+                <i class="fa fa-exclamation-circle" aria-hidden="true"></i> <small>Verify/deny authenticity of an institution</small>
+                <div style="overflow-x: auto;" class="container mt-3">
+                    <table id="verificationTable" class="shadow-hover table-sm table-striped table-hover table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Contact person phone</th>
+                                <th>Email</th>
+                                <th>Institution Type</th>
+                                <th>Name of institution/th>
+                                <th>Date account was created</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(institution, indx) in institutions" v-if="!institution.approved">
+                                <td>{{(indx + 1)}}</td>
+                                <td>{{institution.contact_phone}}</td>
+                                <td>{{institution.email}}</td>
+                                <td>{{institution.type}}</td>
+                                <td>{{institution.name}}</td>
+                                <td>{{institution.createdAt}}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-block">Send invoice <i class="fa fa-envelope"></i>
+                                    <button @click="changeApprovalStatus(1, institution.id)"
+                                        class="btn btn-success btn-block">Approve <i class="fa fa-check"
+                                            aria-hidden="true"></i></button>
+                                    <button @click="changeApprovalStatus(2, institution.id)"
+                                        class="btn btn-danger btn-block">Deny <i class="fa fa-times"
+                                            aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            
+            <section v-show="selected === 'accounts'" id="institutions" class="mt-5">
+                <div class="text-center">
+                    <button class="btn btn-lg btn-success text-center" @click="addWallet">Add Wallet</button>
+                </div>
+
+                <h2></h2>
+                <i class="fa fa-exclamation-circle" aria-hidden="true"></i> <small>Manage wallets</small>
+                <div class="container mt-3" style="overflow-x: auto;">
+                    <table id="institutionTable" class="shadow-hover table-sm table-striped table-hover table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Name</th>
+                                <th>Slots</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Block</th>
+                                <th>Created</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(wallet, indx) in wallets">
+                                <td>{{(indx + 1)}}</td>
+                                <td>{{wallet.acc_number}}</td>
+                                <td>{{wallet.pin}}</td>
+                                <td>{{wallet.bank}}</td>
+                                <td>{{wallet.acct_name}}</td>
+                                <td>{{wallet.tx_ref}}</td>
+                                <td>{{wallet.createdAt}}</td>
+                                <td><button class="btn btn-danger">Delete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section v-show="selected === 'institutions'" id="institutions" class="mt-5">
+                <h2>Institutions</h2>
+                <i class="fa fa-exclamation-circle" aria-hidden="true"></i> <small>Shows list of approved
+                    institutions</small>
+                <div class="container mt-3" style="overflow-x: auto;">
+                    <table id="institutionTable" class="shadow-hover table-sm table-striped table-hover table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Name of institution</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Type</th>
+                                <th>Short description</th>
+                                <th>Address</th>
+                                <th>Date account was created</th>
+                                <!-- <th></th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(institution, indx) in institutions" v-if="institution.approved === '1' || institution.approved">
+                                <td>{{(indx + 1)}}</td>
+                                <td>{{institution.name}}</td>
+                                <td>{{institution.contact_phone}}</td>
+                                <td>{{institution.email}}</td>
+                                <td>{{institution.type}}</td>
+                                <td>{{institution.short_description}}</td>
+                                <td>{{institution.address}}</td>
+                                <td>{{institution.createdAt}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+
+            <section v-show="selected === 'withdrawal'" id="withdrawal">
+                <div class="line"></div>
+                <h2>Withdrawal requests</h2>
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <ul class="list-group">
+                            <li class="list-group-item bg-dark text-light">Destination account</li>
+                            <li class="list-group-item">Account name: <span class="badge badge-dark">Tasiu Kwaplong Saeed</span></li>
+                            <li class="list-group-item">Bank name: <span class="badge badge-dark"> Eco Bank</span></li>
+                            <li class="list-group-item">Account number: <span class="badge badge-dark"> 3647586725</span></li>
+                            <li class="list-group-item">Amount: <span class="badge badge-dark"> 20000</span></li>
+                            <li class="list-group-item">
+                                <button class="btn btn-success">Confirm done <i class="fa fa-check" aria-hidden="true"></i> </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- loading modal starts here -->
+    <div class="modal popup-modal" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header" id="modalHeader">
+                    <h4 class="modal-title">Loading...</h4>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body text-center" id="modalBody">
+                    <img src="../assets/images/loading.gif">
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="dismiss1 btn btn-danger" data-dismiss="modal">Close</button>
+                    <a href="admin-login.html" class="dismiss2 btn btn-danger">Go back</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- loading modal stops here -->
+
+
+    <!-- modal1 starts here -->
+    <div class="modal popup-modal" id="msg">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title1 m-title">Loading...</h4>
+                    <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body m-body text-center">
+                    Processing.....
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="dismiss1 btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- modal1 stops here -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+    <!-- Popper.JS -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script> -->
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $(this).toggleClass('active');
+            });
+        });
+
+        // databale
+        $(document).ready(function () {
+            $('#verificationTable').DataTable();
+            $('#institutionTable').DataTable();
+        });
+    </script>
+
+    <script type="text/javascript" src="../assets/js/admin-controller.js"></script>
+    <script type="text/javascript" src="../assets/js/admin-controller-vue.js"></script>
+</body>
+
+</html>

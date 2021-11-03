@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <script type="text/javascript" src="../assets/js/app.js"></script>
+    <script type="text/javascript">
+        if (getCookie('token').length <= 1) {
+            window.location = 'login.html';
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <title>Institution Dashboard | NAIJAPOLLS</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+        integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+
+    <!-- Font Awesome JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+    <div id="app" class="wrapper">
+        <!-- Sidebar Holder -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="display-3 fa fa-box"></i></h3>
+                <h3>{{institution.name}}</h3>
+                <h6>Estimated members: {{institution.slots}}</h6>
+                <small v-show="institution.approved === '1' || institution.approved === true"
+                    class="badge badge-success">Verification approved <i class="fa fa-thumbs-up"></i> </small>
+                <small v-show="institution.approved === '2' || institution.approved === 2"
+                    class="badge badge-danger">Verification failed <i class="fa fa-thumbs-down"></i> </small>
+                <small v-show="institution.approved === '0' || institution.approved === false"
+                    class="badge badge-warning">Pending verification <i class="fa fa-ellipsis-h"></i> </small>
+            </div>
+
+            <ul class="list-unstyled components">
+                <!-- <li class="active"> -->
+                <li>
+                    <a @click="selected = 'profile'" href="#"><i class="fa fa-user-circle-o"></i> Profile</a>
+                </li>
+                <li>
+                    <a href="voters.html"> <i class="fa fa-people"></i> Manage voters</a>
+                </li>
+                <li>
+                    <a href="contestants.html"> <i class="fa fa-money"></i> Manage contestants</a>
+                </li>
+
+                <li>
+                    <a href="#" @click="selected = 'voting'" > <i class="fa fa- hourglass"></i> Start/Stop voting</a>
+                </li>
+                <li>
+                    <a href="#" @click="logout()" > <i class="fa fa-power-off"></i> Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content Holder -->
+        <div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="navbar-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.html">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" @click="logout()">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <section v-show="selected === 'voters'" id="voters">
+                <div class="line"></div>
+                <div v-if="institution.approved === true || institution.approved === '1'" class="text-center"><a href="voters.html" class="btn btn-success btn-lg">
+                    Add new <i class="fa fa-plus"></i></a href="voters.html">
+                </div>
+                <div class="alert alert-warning text-center" v-else>Your institution has to be verified before you can manage members</div>
+                <h2>Voters</h2>
+                <table class="table table-striped table-inverse table-responsive" width="100%">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>SN</th>
+                            <th>Phone</th>
+                            <th>Ban</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(voter, indx) in voters">
+                                <td scope="row">{{(indx + 1)}}</td>
+                                <td>{{voter.phone}}</td>
+                                <td><button class="btn btn-danger">Ban</button></td>
+                            </tr>
+                        </tbody>
+                </table>
+            </section>
+
+            <section id="profile" v-show="selected === 'profile'">
+                <div class="line"></div>
+                <h2>Profile</h2>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapseOne"><i class="fa fa-calender"></i>
+                            Date created: {{institution.createdAt}}</a>
+                    </div>
+                    <div id="collapseOne" class="collapse show" data-parent="#accordion">
+                        <div class="card-body">
+                            <!-- register form start -->
+                            <form>
+                                <div class="row">
+                                    <div class="col">
+                                        <label>institution Email:</label>
+                                        <br>
+                                        <span class="border p-3 d-inline-block">{{institution.email}}</span>
+                                    </div>
+                                    <div class="col">
+                                        <label>institution Phone:</label>
+                                        <br>
+                                        <span class="border p-3 d-inline-block">{{institution.contact_phone}}</span>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col">
+                                        <label>institution type:</label>
+                                        <br>
+                                        <span class="border p-3 d-inline-block">{{institution.type}}</span>
+                                    </div>
+                                    <div class="col">
+                                        <label>Short address:</label>
+                                        <br>
+                                        <span class="border p-3 d-inline-block">{{institution.short_description}}</span>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col">
+                                        <label>institution address:</label>
+                                        <br>
+                                        <span class="border p-3 d-inline-block">{{institution.address}}</span>
+                                    </div>
+                                </div>
+                                <br>
+                                <button class="btn btn-danger">Reset records</button>
+                            </form>
+                            <!-- register form stops -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="voting" v-show="selected === 'voting'">
+                <div v-if="institution.voting_status">
+                    <div class="line"></div>
+                    <h2>Voting is ongoing</h2>
+                    <small>Voting was started: {{institution.updatedAt}}</small>
+                    <div class="display-1">1<small>min</small> : 00<small>sec</small></div>
+                    <button class="btn btn-lg btn-info" @click="stopVoting">Stop voting</button>
+                </div>
+                <div v-else>
+                    <form name="myForm p-4" id="myForm" @submit="manageElectionStatus">
+                    <label for="description">Election description</label>
+                    <br>
+                    <small>Description displayed on the first screen shown to users</small>
+                    <input type="text" v-model="institution.description" maxlength="30" minlength="5" required class="form-control mb-2" placeholder="e.g: 2021 General elections">
+                    <button class="btn btn-lg btn-info">Start voting</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- loading modal starts -->
+    <!-- The Modal -->
+    <div class="modal popup-modal" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Loading...</h4>
+                    <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body text-center">
+                    <img src="../assets/images/loading.gif">
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="dismiss1 btn btn-danger" data-dismiss="modal">Close</button>
+                    <a href="login.html" class="dismiss2 btn btn-danger">Go back</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Button trigger modal -->
+    
+    <!-- Modal -->
+    <div class="modal fade" id="modelId1" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    Body
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- loading modal stops -->
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Popper.JS -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script> -->
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="../assets/js/institution-controller.js"></script>
+    <script type="text/javascript" src="../assets/js/institution-controller-vue.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $(this).toggleClass('active');
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

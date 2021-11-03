@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Sign in | NAIJAPOLLS</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- Popper JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+  .fixed-top {
+    position: sticky;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+  }
+</style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Home</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+          
+        </ul>
+      </div>  
+    </div>
+  </nav>
+
+  <div class="mt-5 mb-5 pt-5 pb-5 text-center">
+    <button type="button" class="mt-5 mb-5  btn btn-success" data-toggle="modal" data-target="#myModal2">
+      Sign in as admin <i class="fa fa-plus-lock"></i>
+    </button>
+    <hr>
+    <!-- <small>Already registered? <a href="login.html">Sign in</a></small> -->
+  </div>
+
+  <!-- modal start -->
+  <!-- Button to Open the Modal -->
+  <!-- The Modal -->
+  <div class="modal fade" id="myModal2">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">ADMIN LOGIN</h4>
+          <a href="index.html" class="close" >&times;</a>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body2 bg-dark">
+          <!-- Modal body.. -->
+          <div id="accordion">
+
+
+            <div class="card">
+              <div class="card-header">
+                <a class="card-link" data-toggle="collapse" href="#collapseOne">
+                  Sign in <i class="fa fa-male"></i>
+                </a>
+              </div>
+              <div id="collapseOne" class="collapse show" data-parent="#accordion">
+                <div class="card-body">
+                  <!-- register form start -->
+                  <form name="myForm" id="myForm"  onsubmit="return adminLogin()" action="">
+                    <div style="display: none;" class="text-center alert alert-info alreadyLoggedInMsg">You seem to have been logged in already. <br><a href="admin-dashboard.html">Click here to go to your dashboard</a></div>
+                    <div class="form-group">
+                      <label for="email">Username:</label>
+                      <input type="text" class="form-control" placeholder="Enter username" id="email" required minlength="3" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                      <label for="pwd">Password:</label>
+                      <input type="password" class="form-control" placeholder="Enter password" id="pwd" minlength="2" maxlength="20" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Sign in as admin</button>
+                    <hr>
+                  </form>
+                  <!-- register form stops -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- modal body stops here -->
+        </div>
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <a href="index.html" class="btn btn-dark" >&lt;&lt; Go back <i class="fa fa-home"></i> </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- modal stop -->
+
+
+
+
+    <!-- modal starts here -->
+   <!-- The Modal -->
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title"></h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div id="message" class="modal-body">
+        
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+  <!-- modal stops here -->
+
+  <script src="assets/js/app.js"></script>
+
+  <div class="jumbotron text-light bg-dark text-center" style="margin-bottom:0">
+    <div class="row">
+      <div class="col-md-3 border-right">
+        <img src="assets/images/logo.jpg" style="width: 100%;"  class="rounded" alt="Cinque Terre">
+        <br>
+        &copy; 2021 | Created by <a href="https://github.com/tasiukwaplong/naijapolls" target="_blank">Team Wakanda</a>
+      </div>
+      <div class="col-md-9 bg-dark">
+        <h1>REACH US</h1>
+        <ul class="ml-4 text-left list-group list-group-flush" style="list-style: none;font-size: 17px;">
+          <li>
+            <a href="#"> <i class="fa fa-facebook"></i> We're on Facebook @naijapolls</a>
+          </li>
+          <li>
+            <a href="#"> <i class="fa fa-twitter"></i> We're on Twitter @naijapolls</a>
+          </li>
+          <li>
+            <a href="#"> <i class="fa fa-instagram"></i> We're on Instagram @naijapolls</a>
+          </li>
+          <li>
+            <a href="tel:+2349031514346"> <i class="fa fa-phone"></i> +234 9031 514 346</a>
+          </li>
+          <li>
+            <a href="mailto:tasiukwaplong@gmail.com"> <i class="fa fa-envelope"></i> naijapolls@mail.com</a>
+          </li>
+          <!--li>
+            <i class="fa fa-map"></i> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+            quis nostrud exercitation ullamco 
+          </li-->
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    $("#myModal2").modal()
+    
+    if (getCookie('adminToken').length > 1){
+      $(".alreadyLoggedInMsg").show();
+    }
+  </script>
+</body>
+
+</html>

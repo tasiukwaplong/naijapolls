@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <script type="text/javascript" src="../assets/js/app.js"></script>
+    <script type="text/javascript">
+        if (getCookie('token').length <= 1) {
+            window.location = 'login.html';
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <title>Voters | NAIJAPOLLS</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+        integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+
+    <!-- Font Awesome JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script> -->
+    <!-- <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script> -->
+
+</head>
+
+<body>
+
+    <div id="app" class="wrapper">
+        <!-- Sidebar Holder -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="display-3 fa fa-shopping-cart"></i></h3>
+                <h3>{{institution.name}}</h3>
+              
+                <small v-show="institution.approved === '1' || institution.approved === true"
+                    class="badge badge-success">Verification approved <i class="fa fa-thumbs-up"></i> </small>
+                <small v-show="institution.approved === '2' || institution.approved === 2"
+                    class="badge badge-danger">Verification failed <i class="fa fa-thumbs-down"></i> </small>
+                <small v-show="institution.approved === '0' || institution.approved === false"
+                    class="badge badge-warning">Pending verification <i class="fa fa-ellipsis-h"></i> </small>
+
+            </div>
+
+            <ul class="list-unstyled components">
+                <!-- <li class="active"> -->
+                <li>
+                    <a href="dashboard.html#payments"> <i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back
+                        to dashboard</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content Holder -->
+        <div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="navbar-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.html">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" @click="logout()">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <section id="items" v-if="institution.approved === true || institution.approved === '1'">
+                <div class="line"></div>
+                <div v-if="successMsg.length > 1" class="alert alert-success">Operation successful <i
+                        class="fa fa-check"></i> </div>
+                <div v-if="errorMsg.length > 1" class="alert alert-danger">Error: {{errorMsg || ''}} <i
+                        class="fa fa-times"></i> </div>
+                    <div class="card  container p-2 jumbotron">
+                        <div class="card-header">
+                            <h2 >Upload bulk <i class="fa fa-upload"></i></h2>
+                            <small>* Download <u><a href="#csv">this template</a></u> and use to upload bulk contacts</small>
+                        </div> 
+                        <input type="file" class="form-control" accept=".csv">
+                        <button class="btn btn-success">Upload csv</button>
+                    </div>
+                    <div class="card  container p-2 jumbotron">
+                    <div class="card-header">
+                        <h2 v-if="selectedItem.id">Edit <i class="fa fa-pencil"></i></h2>
+                        <h2 v-else>Add single<i class="fa fa-plus"></i></h2>
+                    </div>
+                    <!-- {{selectedItem}} -->
+                    <form name="myForm p-4" id="myForm" @submit="manageUser">
+                        <label for="phone">Phone number</label>
+                        <input v-model="selectedItem.phone" placeholder="e.g: 080xxxx" type="tel" class="form-control"
+                            id="phone" required minlength='11' maxlength="11">
+
+                        <button v-if="!selectedItem.id" type="submit" class="btn btn-success">Add new</button>
+                        <div v-else>
+                            <button type="submit" class="btn btn-success">Edit </button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type="button" @click="deleteItem" class="btn btn-danger">Delete <i
+                                    class="fa fa-trash" aria-hidden="true"></i> </button>
+                        </div>
+                    </form>
+                </div>
+
+                <h2>Voters</h2>
+                <!-- <div class="container row"> -->
+                    <table class="table" >
+                        <!-- <thead class="thead-inverse"> -->
+                            <tr>
+                                <th>SN</th>
+                                <th>Phone</th>
+                                <th>Ban</th>
+                            </tr>
+                            <!-- </thead> -->
+                            <tbody>
+                                <tr v-for="(voter, indx) in voters">
+                                    <td scope="row">{{(indx + 1)}}</td>
+                                    <td>{{voter.phone}}</td>
+                                    <td><button class="btn btn-danger">Ban</button></td>
+                                </tr>
+                            </tbody>
+                    </table>
+                <!-- </div> -->
+            </section>
+            <section v-else>
+                <div class="alert alert-warning display-4 text-center" role="alert">
+                    Your institution has not been verified yet. You need to be verified to be able to add/manage voters
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- loading modal starts -->
+    <!-- The Modal -->
+    <div class="modal popup-modal" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Loading...</h4>
+                    <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body text-center">
+                    <img src="../assets/images/loading.gif">
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="dismiss1 btn btn-danger" data-dismiss="modal">Close</button>
+                    <a href="login.html" class="dismiss2 btn btn-danger">Go back</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- loading modal stops -->
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Popper.JS -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script> -->
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="../assets/js/institution-controller.js"></script>
+    <script type="text/javascript" src="../assets/js/institution-controller-vue.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $(this).toggleClass('active');
+            });
+        });
+
+        $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>
